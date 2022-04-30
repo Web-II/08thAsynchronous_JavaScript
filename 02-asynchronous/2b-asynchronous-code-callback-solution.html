@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2b-asynchronous-code-callback-solution</title>
+    <link rel="stylesheet" href="../css/02-main.css" />
+  </head>
+  <body>
+    <div id="buttons">
+      <button id="btn1">Send HTTP-request</button>
+      <button id="btn2">Reprint 'xhr.status' en 'xhr.text'</button>
+      <button id="btn3">Clear</button>
+    </div>
+
+    <div class="grid-container">
+      <div>
+        <p>Messages :</p>
+        <p id="msg"></p>
+      </div>
+      <div>
+        <p>xhr.text :</p>
+        <p id="txt"></p>
+      </div>
+    </div>
+    <script type="module">
+      import * as helpers from './modules/helpers.js';
+
+      // 1. Creëer een nieuw XMLHttpRequest-object.
+      const xhr = new XMLHttpRequest();
+
+      btn1.onclick = () => {
+        // 2. Initializeer het object met de Open-methode
+        //      .open(method, URL, [async, user, password])
+        xhr.open('GET', '../data/part1.txt');
+        // xhr.open(
+        //   'GET',
+        //   'https://raw.githubusercontent.com/plauwaer/tijdelijk/main/part1.txt'
+        // );
+
+        // 3. 'Send' de http-request.
+        //    Deze methode opent een connectie en verstuurt
+        //    de http-request naar de server.
+        helpers.addMessage('- BEFORE request send');
+        // xhr.send() is een asynchrone opdracht
+        xhr.send();
+        // onderstaande tekst wordt onmiddellijk weergegeven ook al is
+        // de asynchrone opdracht nog niet afgerond
+        helpers.addMessage('- AFTER request send');
+
+        // de callback-functie zal pas uitgevoerd worden als de asynchrone
+        // XMLHttpRequest-opdracht afgerond is!!
+        xhr.onload = () => {
+          helpers.addMessage(`- xhr.status (HTTP-statuscode): ${xhr.status}`);
+          helpers.setText(xhr.responseText);
+        };
+      };
+
+      btn2.onclick = () => {
+        helpers.addMessage(`- xhr.status (HTTP-statuscode): ${xhr.status}`);
+        helpers.setText(xhr.responseText);
+      };
+
+      btn3.onclick = () => {
+        helpers.clearMessages();
+        helpers.clearText();
+      };
+
+    </script>
+  </body>
+</html>
